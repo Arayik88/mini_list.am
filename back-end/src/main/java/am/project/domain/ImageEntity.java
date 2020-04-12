@@ -1,4 +1,4 @@
-package am.project.model;
+package am.project.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

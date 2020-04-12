@@ -1,4 +1,4 @@
-package am.project.model.util;
+package am.project.domain.util;
 
 public enum UserRole {
 

@@ -1,4 +1,4 @@
-package am.project.model;
+package am.project.domain;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
-package am.project.model;
+package am.project.domain;
 
-import am.project.model.util.UserRole;
+import am.project.domain.util.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;

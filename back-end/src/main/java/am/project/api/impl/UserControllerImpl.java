@@ -1,18 +1,18 @@
 package am.project.api.impl;
 
 import am.project.api.UserController;
-import am.project.domain.UserEntity;
+import am.project.dto.user.UserInfoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public class UserControllerImpl implements UserController {
     @Override
-    public Page<UserEntity> findAllUsers() {
+    public Page<UserInfoDTO> findAllUsers() {
         return null;
     }
 
     @Override
-    public Page<UserEntity> searchByName(String text, Pageable pageable) {
+    public Page<UserInfoDTO> searchByName(String text, Pageable pageable) {
         return null;
     }
 
@@ -22,7 +22,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public void update(UserEntity user) {
+    public void update(UserInfoDTO user) {
 
     }
 }

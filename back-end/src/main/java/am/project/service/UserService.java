@@ -1,10 +1,10 @@
-package am.project.api;
+package am.project.service;
 
 import am.project.dto.user.UserInfoDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface UserController {
+public interface UserService {
 
     Page<UserInfoDTO> findAllUsers(Pageable pageable);
 
@@ -13,5 +13,4 @@ public interface UserController {
     void remove(Long id);
 
     void update(UserInfoDTO user);
-
 }

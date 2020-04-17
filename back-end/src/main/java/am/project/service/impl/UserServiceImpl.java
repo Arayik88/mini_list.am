@@ -40,6 +40,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity findByMail(String mail) {
+        Optional<UserEntity> byMail = userRepository.findByMail(mail);
+
+        UserEntity user = null;
+
+        if(byMail.isPresent()){
+            user = byMail.get();
+        }
+
+        return user;
+    }
+
+    @Override
     public void remove(Long id) {
 
         Optional<UserEntity> byId = userRepository.findById(id);

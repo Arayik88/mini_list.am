@@ -1,7 +1,11 @@
 package am.project.config;
 
+import am.project.security.jwt.JwtConfigurer;
+import am.project.security.jwt.JwtTokenProvider;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,19 +16,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    //private final JwtTokenProvider jwtTokenProvider;
-    //private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-//    public SecurityConfig(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
-//        this.jwtTokenProvider = jwtTokenProvider;
-//        this.userRepository = userRepository;
-//    }
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
-//    @Override
-//    @Bean
-//    public AuthenticationManager authenticationManagerBean() throws Exception {
-//        return super.authenticationManagerBean();
-//    }
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -42,8 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
-                .and();
-                //.apply(new OAuth2ResourceServerConfigurer.JwtConfigurer(jwtTokenProvider, userRepository));
+                .and()
+                .apply(new JwtConfigurer(jwtTokenProvider));
     }
 
 }

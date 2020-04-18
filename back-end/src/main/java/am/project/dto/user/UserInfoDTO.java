@@ -4,6 +4,8 @@ import am.project.domain.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.stream.Stream;
+
 @Getter
 @Setter
 public class UserInfoDTO {
@@ -36,9 +38,10 @@ public class UserInfoDTO {
         userInfoDTO.mail = user.getMail();
         userInfoDTO.phone = user.getPhone();
 
-        userInfoDTO.roles = (String[]) user.getRoles().stream().map(Enum::toString).toArray();
+        userInfoDTO.roles = Stream.of(user.getRoles())
+                .map(Object::toString).toArray(String[]::new);
 
-        userInfoDTO.imageId = user.getImage().getId();
+        userInfoDTO.imageId = (user.getImage() != null) ? user.getImage().getId() : null;
 
         return userInfoDTO;
 

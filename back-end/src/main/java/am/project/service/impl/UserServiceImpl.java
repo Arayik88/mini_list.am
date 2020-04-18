@@ -1,24 +1,30 @@
 package am.project.service.impl;
 
 import am.project.domain.UserEntity;
+import am.project.domain.util.UserRole;
 import am.project.dto.user.UserInfoDTO;
+import am.project.dto.user.UserRegistrationDto;
 import am.project.repository.UserRepository;
 import am.project.service.UserService;
+import am.project.service.util.exception.UserAlreadyExistsException;
 import am.project.service.util.exception.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Page<UserInfoDTO> findAllUsers(Pageable pageable) {
@@ -53,6 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void remove(Long id) {
 
         Optional<UserEntity> byId = userRepository.findById(id);
@@ -66,6 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void update(UserInfoDTO user) {
 
         Optional<UserEntity> byId = userRepository.findById(user.getId());
@@ -78,5 +86,21 @@ public class UserServiceImpl implements UserService {
         else {
             throw new UserNotFoundException(user.getId());
         }
+    }
+
+    @Override
+    @Transactional
+    public void register(UserRegistrationDto user) {
+
+        Optional<UserEntity> byMail = userRepository.findByMail(user.getMail());
+        if(byMail.isPresent()){
+            throw new UserAlreadyExistsException(user.getMail());
+        }
+
+        UserEntity userEntity = user.toEntity();
+        userEntity.getRoles().add(UserRole.ROLE_USER);
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userEntity);
+
     }
 }

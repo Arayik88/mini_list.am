@@ -1,17 +1,41 @@
 package am.project.api;
 
 import am.project.dto.user.UserInfoDTO;
+import am.project.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
 
-public interface UserController {
 
-    Page<UserInfoDTO> findAllUsers(Pageable pageable);
+@RestController
+@RequestMapping("/api/users/")
+public class UserController {
 
-    Page<UserInfoDTO> searchByName(String fullName, Pageable pageable);
+    private UserService userService;
 
-    void remove(Long id);
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-    void update(UserInfoDTO user);
+    @GetMapping("all")
+    public Page<UserInfoDTO> findAllUsers(@PageableDefault Pageable pageable) {
+        return userService.findAllUsers(pageable);
+    }
 
+    @GetMapping("search")
+    public Page<UserInfoDTO> searchByName(@RequestParam String fullName, @PageableDefault Pageable pageable) {
+
+        return userService.searchByName(fullName, pageable);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public void remove(@PathVariable Long id) {
+        userService.remove(id);
+    }
+
+    @PutMapping("update")
+    public void update(@RequestBody UserInfoDTO user) {
+
+    }
 }

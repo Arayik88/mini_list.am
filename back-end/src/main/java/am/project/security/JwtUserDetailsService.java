@@ -4,6 +4,7 @@ import am.project.domain.UserEntity;
 import am.project.security.jwt.JwtUser;
 import am.project.security.jwt.JwtUserFactory;
 import am.project.service.UserService;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Primary
 public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;

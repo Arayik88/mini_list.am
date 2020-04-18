@@ -2,6 +2,7 @@ package am.project.service;
 
 import am.project.domain.UserEntity;
 import am.project.dto.user.UserInfoDTO;
+import am.project.dto.user.UserRegistrationDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,6 @@ public interface UserService {
     void remove(Long id);
 
     void update(UserInfoDTO user);
+
+    void register(UserRegistrationDto user);
 }

@@ -2,8 +2,10 @@ package am.project.security.jwt;
 
 import am.project.domain.util.UserRole;
 import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,11 +29,8 @@ public class JwtTokenProvider {
     @Value("${jwt.token.expired}")
     private Long validityInMilliseconds;
 
+    @Autowired
     private UserDetailsService userDetailsService;
-
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
@@ -43,9 +42,9 @@ public class JwtTokenProvider {
     protected void init(){secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToke(String username, List<UserRole> roles){
+    public String createToke(String mail, List<UserRole> roles){
 
-        Claims claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject(mail);
         claims.put("roles", getRoleNames(roles));
 
         Date now = new Date();
@@ -62,7 +61,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token){
 
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getUsername(String token){

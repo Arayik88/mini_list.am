@@ -5,6 +5,7 @@ import am.project.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,6 +20,7 @@ public class UserController {
     }
 
     @GetMapping("all")
+    @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public Page<UserInfoDTO> findAllUsers(@PageableDefault Pageable pageable) {
         return userService.findAllUsers(pageable);
     }

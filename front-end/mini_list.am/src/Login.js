@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+
 export default function Login() {
     const Severities = {success: "success", error: "error", warning: "warning", info: "info"};
     const [open, setOpen] = useState(false);
@@ -62,13 +63,22 @@ export default function Login() {
     const [input, setInput] = useState({
         email: localStorage.getItem("listAmLogin"),
         password: localStorage.getItem("listAmPassword"),
-        "": localStorage.getItem("listAmRemember")
+        checked: localStorage.getItem("checked")
     });
 
-    const handleInputChange = (e) => setInput({
-        ...input,
-        [e.currentTarget.name]: e.currentTarget.value
-    });
+    const handleInputChange = (e) => {
+        if (e === "checkbox") {
+            setInput({
+                ...input,
+                checked: !input.checked
+            });
+        } else {
+            setInput({
+                ...input,
+                [e.currentTarget.name]: e.currentTarget.value
+            })
+        }
+    };
 
     const handleSignIn = async (e) => {
         e.preventDefault();
@@ -80,7 +90,6 @@ export default function Login() {
             setTimeout(() => {
                 window.location.reload()
             }, 3000);
-            console.log(input)
             return;
         }
         if (!input.password || input.password.length < 8) {
@@ -92,9 +101,34 @@ export default function Login() {
             }, 3000);
             return;
         }
+
+        if (input.checked) {
+            localStorage.setItem("listAmLogin", input.email);
+            localStorage.setItem("listAmPassword", input.password);
+            localStorage.setItem("checked", input.checked);
+        } else {
+            localStorage.removeItem("listAmLogin");
+            localStorage.removeItem("listAmPassword");
+            localStorage.removeItem("checked");
+        }
         let response;
         try {
             response = await makePost("/api/auth/login");
+            if (response.status === 200) {
+                /*film starts here*/ //TODO must be loaded current user home page
+            }
+            if (response.status === 404 || response.status === 403) {
+                setOpen(true)
+                setSeverity(Severities.error)
+                setMessage("Wrong Credentials")
+
+            }
+            if (response.status === 400) {
+                setOpen(true)
+                setSeverity(Severities.error)
+                setMessage("User is not activated")
+
+            }
         } catch (e) {
             setSeverity(Severities.error);
             setMessage("No Connection");
@@ -127,7 +161,7 @@ export default function Login() {
                         autoFocus
                         type="email"
                         onChange={handleInputChange}
-                        value={input.name}
+                        value={input.email}
                     />
                     <TextField
                         variant="outlined"
@@ -140,11 +174,11 @@ export default function Login() {
                         id="password"
                         autoComplete="current-password"
                         onChange={handleInputChange}
-                        value={input.name}
+                        value={input.password}
                     />
                     <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" onChange={handleInputChange}
-                                           checked={input.name}/>}
+                        control={<Checkbox color="primary" onChange={(e) => handleInputChange("checkbox")}
+                                           checked={input.checked}/>}
                         label="Remember me"
                     />
                     <Button

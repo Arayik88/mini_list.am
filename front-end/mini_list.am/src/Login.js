@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Alert from "./util/Alert";
+import {makePost, makeGet} from "./util/requestMaker";
 
 function Copyright() {
     return (
@@ -69,15 +70,16 @@ export default function Login() {
         [e.currentTarget.name]: e.currentTarget.value
     });
 
-    const handleSubmit = (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault();
         const mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!input.email || !input.email.match(mailFormat)) {
             setSeverity(Severities.error);
             setMessage("Please input valid email.");
             setOpen(true);
-            console.log(input)
-            setTimeout(()=>{window.location.reload()}, 3000);
+            setTimeout(() => {
+                window.location.reload()
+            }, 3000);
             console.log(input)
             return;
         }
@@ -85,8 +87,21 @@ export default function Login() {
             setSeverity(Severities.error);
             setMessage("The password must contain at least 8 characters.");
             setOpen(true);
-            setTimeout(()=>{window.location.reload()}, 3000);
+            setTimeout(() => {
+                window.location.reload()
+            }, 3000);
             return;
+        }
+        let response;
+        try {
+            response = await makePost("/api/auth/login");
+        } catch (e) {
+            setSeverity(Severities.error);
+            setMessage("No Connection");
+            setOpen(true);
+            setTimeout(() => {
+                setOpen(false);
+            }, 3000);
         }
     };
     return (
@@ -138,7 +153,7 @@ export default function Login() {
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                        onClick={handleSubmit}
+                        onClick={handleSignIn}
                     >
                         Sign In
                     </Button>

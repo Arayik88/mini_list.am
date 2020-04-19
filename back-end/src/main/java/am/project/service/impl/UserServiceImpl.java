@@ -5,12 +5,14 @@ import am.project.domain.util.UserRole;
 import am.project.dto.user.UserInfoDTO;
 import am.project.dto.user.UserRegistrationDto;
 import am.project.repository.UserRepository;
+import am.project.security.jwt.JwtUser;
 import am.project.service.UserService;
 import am.project.service.util.exception.UserAlreadyExistsException;
 import am.project.service.util.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +61,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserInfoDTO findById(Long id) {
+        Optional<UserEntity> byId = userRepository.findById(id);
+
+        UserEntity user = null;
+
+        if(byId.isPresent()){
+            user = byId.get();
+        }
+
+        return user == null ? null : UserInfoDTO.mapFromEntity(user);
+    }
+
+    @Override
     @Transactional
     public void remove(Long id) {
 
@@ -102,5 +117,15 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(userEntity);
 
+    }
+
+    @Override
+    public Long getMe() {
+
+        return ((JwtUser)SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal())
+                .getId();
     }
 }

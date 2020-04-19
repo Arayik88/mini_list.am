@@ -19,6 +19,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    @PreAuthorize(value = "isAuthenticated()")
+    public UserInfoDTO getMe() {
+        return userService.findById(userService.getMe());
+    }
+
     @GetMapping("all")
     @PreAuthorize(value = "hasAuthority('ROLE_ADMIN')")
     public Page<UserInfoDTO> findAllUsers(@PageableDefault Pageable pageable) {

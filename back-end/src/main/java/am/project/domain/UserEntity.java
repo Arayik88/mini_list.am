@@ -44,6 +44,9 @@ public class UserEntity {
     @Column(nullable = false)
     private Boolean active = Boolean.FALSE;
 
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted = Boolean.FALSE;
+
     @CreationTimestamp
     @Column(name = "created", updatable = false)
     private LocalDateTime created;

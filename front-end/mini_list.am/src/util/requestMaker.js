@@ -28,11 +28,7 @@ async function request(url, headers = {}, method, body = {}) {
         },
         body,
     };
-    const response = await fetch(baseUrl + url, options);
-    if (response.status !== 200) {
-        throw new Error(`Response.Status: ${response.status}`);
-    }
-    return response;
+    return fetch(baseUrl + url, options);
 }
 export const makeGet = async (url, headers, body) => request(url, headers, 'GET', body);
 export const makePost = async (url, headers, body) => request(url, headers, 'POST', body);

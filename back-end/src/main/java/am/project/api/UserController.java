@@ -19,7 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("me")
     @PreAuthorize(value = "isAuthenticated()")
     public UserInfoDTO getMe() {
         return userService.findById(userService.getMe());
